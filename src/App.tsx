@@ -2,6 +2,7 @@ import { ParticleBackground } from './components/ParticleBackground';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
+import { Experience } from './components/Experience';
 import { FooterTicker } from './components/FooterTicker';
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
 
       {/* 3D Projects Showcase Section */}
       <Projects />
+
+      {/* Staggered Experience Timeline Section */}
+      <Experience />
     </div>
   );
 }
