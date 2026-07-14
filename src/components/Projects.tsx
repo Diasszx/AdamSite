@@ -82,6 +82,8 @@ export const Projects: React.FC = () => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   // Monitor screen size for responsive 3D offset calculations
   useEffect(() => {
@@ -135,6 +137,33 @@ export const Projects: React.FC = () => {
   const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
     setActiveIndex((prev) => (prev + 1) % PROJECTS_DATA.length);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const diffX = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (diffX > minSwipeDistance) {
+      // Swipe para a esquerda (próximo projeto)
+      setActiveIndex((prev) => (prev + 1) % PROJECTS_DATA.length);
+    } else if (diffX < -minSwipeDistance) {
+      // Swipe para a direita (projeto anterior)
+      setActiveIndex(
+        (prev) => (prev - 1 + PROJECTS_DATA.length) % PROJECTS_DATA.length,
+      );
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
   };
 
   const getCardTransform = (index: number) => {
@@ -226,7 +255,10 @@ export const Projects: React.FC = () => {
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="w-full flex items-center justify-center relative min-h-[500px] md:min-h-[580px] select-none pointer-events-auto"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="w-full flex items-center justify-center relative min-h-[700px] md:min-h-[580px] select-none pointer-events-auto"
           style={{ perspective: "1500px" }}
         >
           {/* Wrapper único que recebe o tilt — todo o carrossel inclina como um bloco rígido */}
@@ -257,7 +289,7 @@ export const Projects: React.FC = () => {
                   }`}
                 >
                   {/* Image Card Display */}
-                  <div className="w-[280px] h-[340px] md:w-[320px] md:h-[440px] rounded-2xl md:rounded-l-2xl md:rounded-r-none overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl relative flex-shrink-0">
+                  <div className="w-[280px] h-[300px] md:w-[320px] md:h-[440px] rounded-2xl md:rounded-l-2xl md:rounded-r-none overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl relative flex-shrink-0">
                     <img
                       src={project.image}
                       alt={project.title}
@@ -271,7 +303,7 @@ export const Projects: React.FC = () => {
                   <div
                     className={`transition-all duration-500 ease-out flex flex-col justify-between bg-zinc-950/95 border border-zinc-800/80 p-5 md:p-6 rounded-b-2xl md:rounded-r-2xl md:rounded-b-none border-t-0 md:border-t md:border-l-0 overflow-hidden ${
                       isActive && showPanel
-                        ? "w-[280px] h-[220px] md:w-[300px] md:h-[440px] opacity-100 translate-y-0 md:translate-x-0"
+                        ? "w-[280px] h-[290px] md:w-[300px] md:h-[440px] opacity-100 translate-y-0 md:translate-x-0"
                         : "w-[280px] h-0 md:w-0 md:h-[440px] opacity-0 -translate-y-4 md:translate-y-0 md:-translate-x-4 pointer-events-none"
                     }`}
                   >
