@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import GithubIcon from "../assets/icons/GITHUB.svg";
 
 interface Project {
   id: number;
@@ -8,39 +9,69 @@ interface Project {
   description: string;
   image: string;
   tags: string[];
-  link: string;
+  github: string;
+  deploy: string;
 }
 
 const PROJECTS_DATA: Project[] = [
   {
     id: 1,
-    title: "E-Commerce App",
+    title: "E-commerce",
     subtitle: "Plataforma de Vendas",
     description:
-      "Experiência de compra moderna focada em dispositivos móveis, desenvolvida para otimizar taxas de conversão e engajamento.",
+      "Aplicação de e-commerce desenvolvida em React e TypeScript com integração com Firebase, autenticação de usuários e gerenciamento de produtos e categorias.",
     image: "/project_ecommerce.png",
-    tags: ["React", "TypeScript", "Tailwind CSS", "Stripe"],
-    link: "#",
+    tags: [
+      "React",
+      "TypeScript",
+      "Tailwind",
+      "Firebase",
+      "React Router",
+      "Styled Components",
+      "React Hook",
+    ],
+    github: "https://github.com/Diasszx/ecommerce",
+    deploy: "https://ecommerce-ochre-three-75.vercel.app/",
   },
   {
     id: 2,
-    title: "Dashboard de Análise",
-    subtitle: "Real-time Metrics",
+    title: "Task Manager",
+    subtitle: "Gerenciador de Tarefas",
     description:
-      "Painel administrativo completo com atualização de dados em tempo real, gráficos interativos e exportação de relatórios.",
+      "Aplicação web para gerenciamento de tarefas(CRUD. O projeto foi desenvolvido com foco em boas práticas do React, componentização, gerenciamento de estado e navegação entre páginas.",
     image: "/project_dashboard.png",
-    tags: ["Next.js", "PostgreSQL", "Tailwind", "ChartJS"],
-    link: "#",
+    tags: [
+      "React",
+      "Vite",
+      "JavaScript",
+      "Tailwind",
+      "React Router",
+      "React Hook",
+      "JSON Server",
+    ],
+    github: "https://github.com/Diasszx/task-manager",
+    deploy: "https://task-manager-kohl-seven-97.vercel.app/tasks",
   },
   {
     id: 3,
-    title: "AI Content Creator",
-    subtitle: "Inteligência Artificial SaaS",
+    title: "Finance Track",
+    subtitle: "Dashboard Financeiro",
     description:
-      "Plataforma geradora de conteúdos integrando APIs de IA avançadas para automatizar copys e criativos de marketing.",
+      "Dashboard financeiro responsivo para controle de receitas, despesas e investimentos(CRUD), com autenticação de usuários, visualização de saldo, filtros por período e integração com API REST utilizando autenticação baseada em JWT.",
     image: "/project_ai.png",
-    tags: ["React", "OpenAI API", "Prisma", "Node.js"],
-    link: "#",
+    tags: [
+      "React",
+      "JavaScript",
+      "Tailwind",
+      "shadcn/ui",
+      "React Query",
+      "React Router",
+      "React Hooks",
+      "Zod",
+      "Axios",
+    ],
+    github: "https://github.com/Diasszx/finance-track",
+    deploy: "https://finance-track-eta-five.vercel.app/login",
   },
 ];
 
@@ -96,7 +127,9 @@ export const Projects: React.FC = () => {
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveIndex((prev) => (prev - 1 + PROJECTS_DATA.length) % PROJECTS_DATA.length);
+    setActiveIndex(
+      (prev) => (prev - 1 + PROJECTS_DATA.length) % PROJECTS_DATA.length,
+    );
   };
 
   const handleNext = (e: React.MouseEvent) => {
@@ -196,89 +229,114 @@ export const Projects: React.FC = () => {
           className="w-full flex items-center justify-center relative min-h-[500px] md:min-h-[580px] select-none pointer-events-auto"
           style={{ perspective: "1500px" }}
         >
-        {/* Wrapper único que recebe o tilt — todo o carrossel inclina como um bloco rígido */}
-        <div
-          style={{
-            transformStyle: "preserve-3d",
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-            transformOrigin: "center 30%",
-            transition: isHovered ? "none" : "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
-            width: "100%",
-            height: "100%",
-            position: "relative",
-          }}
-        >
-          {PROJECTS_DATA.map((project, index) => {
-            const style = getCardTransform(index);
-            const isActive = index === activeIndex;
+          {/* Wrapper único que recebe o tilt — todo o carrossel inclina como um bloco rígido */}
+          <div
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+              transformOrigin: "center 30%",
+              transition: isHovered
+                ? "none"
+                : "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
+              width: "100%",
+              height: "100%",
+              position: "relative",
+            }}
+          >
+            {PROJECTS_DATA.map((project, index) => {
+              const style = getCardTransform(index);
+              const isActive = index === activeIndex;
 
-            return (
-              <div
-                key={project.id}
-                onClick={() => handleCardClick(index)}
-                style={style}
-                className={`absolute left-1/2 top-1/2 flex flex-col md:flex-row items-stretch transition-all duration-700 ease-out select-none pointer-events-auto ${
-                  isActive ? "cursor-default" : "cursor-pointer"
-                }`}
-              >
-                {/* Image Card Display */}
-                <div className="w-[280px] h-[340px] md:w-[320px] md:h-[440px] rounded-2xl md:rounded-l-2xl md:rounded-r-none overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl relative flex-shrink-0">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover select-none pointer-events-none"
-                  />
-                  {/* Visual linear vignette fade on card bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                </div>
-
-                {/* Collapsible Sidebar Details Panel */}
+              return (
                 <div
-                  className={`transition-all duration-500 ease-out flex flex-col justify-between bg-zinc-950/95 border border-zinc-800/80 p-5 md:p-6 rounded-b-2xl md:rounded-r-2xl md:rounded-b-none border-t-0 md:border-t md:border-l-0 overflow-hidden ${
-                    isActive && showPanel
-                      ? "w-[280px] h-[220px] md:w-[300px] md:h-[440px] opacity-100 translate-y-0 md:translate-x-0"
-                      : "w-[280px] h-0 md:w-0 md:h-[440px] opacity-0 -translate-y-4 md:translate-y-0 md:-translate-x-4 pointer-events-none"
+                  key={project.id}
+                  onClick={() => handleCardClick(index)}
+                  style={style}
+                  className={`absolute left-1/2 top-1/2 flex flex-col md:flex-row items-stretch transition-all duration-700 ease-out select-none pointer-events-auto ${
+                    isActive ? "cursor-default" : "cursor-pointer"
                   }`}
                 >
-                  {/* Title & Info */}
-                  <div className="flex flex-col gap-2">
-                    <span className="text-[10px] md:text-xs uppercase font-mono tracking-widest text-zinc-500 font-bold">
-                      {project.subtitle}
-                    </span>
-                    <h3 className="text-lg md:text-xl font-display uppercase tracking-wider text-white">
-                      {project.title}
-                    </h3>
-                    <p className="text-zinc-400 font-mono text-[10px] md:text-xs leading-relaxed tracking-wide mt-2 md:mt-4 line-clamp-3 md:line-clamp-none">
-                      {project.description}
-                    </p>
+                  {/* Image Card Display */}
+                  <div className="w-[280px] h-[340px] md:w-[320px] md:h-[440px] rounded-2xl md:rounded-l-2xl md:rounded-r-none overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl relative flex-shrink-0">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover select-none pointer-events-none"
+                    />
+                    {/* Visual linear vignette fade on card bottom */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                   </div>
 
-                  {/* Tags & Action Button */}
-                  <div className="mt-4 flex flex-col gap-4">
-                    {/* Technology Tags */}
-                    <div className="flex flex-wrap gap-1.5 md:gap-2">
-                      {project.tags.map((tag, tIdx) => (
-                        <span
-                          key={tIdx}
-                          className="text-[8px] md:text-[9px] uppercase font-mono tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-300 px-2 py-0.5 rounded"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  {/* Collapsible Sidebar Details Panel */}
+                  <div
+                    className={`transition-all duration-500 ease-out flex flex-col justify-between bg-zinc-950/95 border border-zinc-800/80 p-5 md:p-6 rounded-b-2xl md:rounded-r-2xl md:rounded-b-none border-t-0 md:border-t md:border-l-0 overflow-hidden ${
+                      isActive && showPanel
+                        ? "w-[280px] h-[220px] md:w-[300px] md:h-[440px] opacity-100 translate-y-0 md:translate-x-0"
+                        : "w-[280px] h-0 md:w-0 md:h-[440px] opacity-0 -translate-y-4 md:translate-y-0 md:-translate-x-4 pointer-events-none"
+                    }`}
+                  >
+                    {/* Title & Info */}
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[10px] md:text-xs uppercase font-mono tracking-widest text-zinc-500 font-bold">
+                        {project.subtitle}
+                      </span>
+                      <h3 className="text-lg md:text-xl font-display uppercase tracking-wider text-white">
+                        {project.title}
+                      </h3>
+                      <p className="text-zinc-400 font-mono text-[10px] md:text-xs leading-relaxed tracking-wide mt-2 md:mt-4 line-clamp-3 md:line-clamp-none">
+                        {project.description}
+                      </p>
                     </div>
 
-                    {/* Visit Site Button */}
-                    <button className="w-full bg-blue-950 text-blue-400 border border-blue-900/50 text-[10px] md:text-xs tracking-widest font-extrabold uppercase py-2 md:py-2.5 rounded-full flex items-center justify-center gap-2 group transition-all duration-300 hover:bg-blue-400 hover:text-black active:scale-95 cursor-pointer pointer-events-auto">
-                      <span>SABER MAIS</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Tags & Action Button */}
+                    <div className="mt-4 flex flex-col gap-4">
+                      {/* Technology Tags */}
+                      <div className="flex flex-wrap gap-1.5 md:gap-2">
+                        {project.tags.map((tag, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="text-[8px] md:text-[9px] uppercase font-mono tracking-wider bg-zinc-900 border border-zinc-800 text-zinc-300 px-2 py-0.5 rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Action Buttons: GitHub & Live Demo */}
+                      <div className="flex items-center gap-2 mt-2 w-full">
+                        {/* GitHub Button */}
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800/80 text-[10px] tracking-widest font-extrabold uppercase py-2 md:py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 cursor-pointer pointer-events-auto"
+                        >
+                          <img
+                            src={GithubIcon}
+                            className="w-3.5 h-3.5 brightness-0 invert opacity-80"
+                            alt="GitHub"
+                          />
+                          <span>GITHUB</span>
+                        </a>
+
+                        {/* Live Demo Button */}
+                        <a
+                          href={project.deploy}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 bg-blue-950 hover:bg-blue-400 text-blue-400 hover:text-black border border-blue-900/50 text-[10px] tracking-widest font-extrabold uppercase py-2 md:py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 cursor-pointer pointer-events-auto"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>VER PROJETO</span>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
 
         {/* Right Arrow Button */}
         <button
