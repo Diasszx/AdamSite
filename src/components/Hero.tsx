@@ -56,14 +56,14 @@ export const Hero: React.FC = () => {
   return (
     <section className="flex-1 w-full relative flex flex-col justify-between px-6 md:px-12 py-8 md:py-16 overflow-hidden">
       {/* Central Portrait of the young man */}
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[85%] sm:w-[65%] md:w-[48%] lg:w-[40%] max-w-[500px] h-[65%] sm:h-[75%] md:h-[85%] z-0 flex items-end justify-center select-none overflow-hidden group/portrait pointer-events-auto opacity-35 md:opacity-95 transition-opacity duration-500">
+      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-full h-full sm:w-[70%] md:w-[55%] lg:w-[45%] max-w-none md:max-w-[580px] sm:h-[80%] md:h-[90%] z-0 flex items-end justify-center select-none overflow-hidden group/portrait pointer-events-auto opacity-30 md:opacity-95 transition-opacity duration-500">
         <img
           src="/young_man_portrait.png"
           alt="ADAM Portrait"
-          className="w-full h-full object-cover object-top transition-transform duration-700 ease-out hover:scale-[1.06] cursor-pointer grayscale filter contrast-[1.10] brightness-[0.95]"
+          className="w-full h-full object-cover object-center transition-transform duration-700 ease-out hover:scale-[1.06] cursor-pointer grayscale filter contrast-[1.10] brightness-[0.95]"
         />
         {/* Subtle overlay gradient to blend bottom edge */}
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
       </div>
 
       {/* Main Content Layout (Flex Grid) */}
