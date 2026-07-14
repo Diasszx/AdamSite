@@ -2,10 +2,25 @@ import React from "react";
 import { ArrowUpRight } from "lucide-react";
 
 export const Header: React.FC = () => {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      window.history.pushState(null, "", `#${id}`);
+    }
+  };
+
   return (
     <header className="w-full flex items-center justify-between px-6 md:px-12 py-6 relative z-10 select-none">
       {/* Logo */}
-      <div className="flex items-center gap-3 group cursor-pointer">
+      <div
+        className="flex items-center gap-3 group cursor-pointer"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
         {/* Customized Logo Icon (Lime circle with 4-pointed star) */}
         <div className="w-9 h-9 rounded-full bg-blue-400 flex items-center justify-center transition-transform duration-500 group-hover:rotate-180">
           <svg
@@ -25,18 +40,21 @@ export const Header: React.FC = () => {
       <nav className="hidden md:flex items-center gap-10 font-bold text-sm tracking-widest text-zinc-400">
         <a
           href="#projects"
+          onClick={(e) => handleScroll(e, "projects")}
           className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
         >
           PROJETOS
         </a>
         <a
           href="#experience"
+          onClick={(e) => handleScroll(e, "experience")}
           className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
         >
           EXPERIÊNCIA
         </a>
         <a
           href="#contact"
+          onClick={(e) => handleScroll(e, "contact")}
           className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
         >
           CONTATO
@@ -44,7 +62,10 @@ export const Header: React.FC = () => {
       </nav>
 
       {/* LET'S WORK Button */}
-      <button className="bg-blue-400 text-black font-extrabold text-xs md:text-sm tracking-wider px-5 py-2 md:px-6 md:py-2.5 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] active:scale-95">
+      <button
+        onClick={(e) => handleScroll(e, "contact")}
+        className="bg-blue-400 text-black font-extrabold text-xs md:text-sm tracking-wider px-5 py-2 md:px-6 md:py-2.5 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] active:scale-95 cursor-pointer"
+      >
         <span>VAMOS COMEÇAR</span>
         <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center text-blue-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">
           <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={3} />

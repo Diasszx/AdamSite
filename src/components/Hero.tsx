@@ -94,7 +94,15 @@ export const Hero: React.FC = () => {
               <span>DESENVOLVEDOR FRONT-END</span>
             </div>
 
-            <button className="bg-white text-black font-extrabold text-xs md:text-sm tracking-wider px-6 py-3 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-blue-400 hover:shadow-[0_0_15px_rgba(204,255,0,0.5)] active:scale-95 pointer-events-auto">
+            <button
+              onClick={() => {
+                const element = document.getElementById("projects");
+                if (element) {
+                  element.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+              }}
+              className="bg-white text-black font-extrabold text-xs md:text-sm tracking-wider px-6 py-3 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-blue-400 hover:shadow-[0_0_15px_rgba(204,255,0,0.5)] active:scale-95 pointer-events-auto cursor-pointer"
+            >
               <span>CONHECER PROJETOS</span>
               <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center text-white transition-transform duration-300 group-hover:translate-x-1">
                 <ArrowRight
