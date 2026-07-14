@@ -39,7 +39,7 @@ const PROJECTS_DATA: Project[] = [
     subtitle: "Gerenciador de Tarefas",
     description:
       "Aplicação web para gerenciamento de tarefas(CRUD. O projeto foi desenvolvido com foco em boas práticas do React, componentização, gerenciamento de estado e navegação entre páginas.",
-    image: "/project_dashboard.png",
+    image: "/taskmanagerhover.png",
     tags: [
       "React",
       "Vite",
@@ -58,7 +58,7 @@ const PROJECTS_DATA: Project[] = [
     subtitle: "Dashboard Financeiro",
     description:
       "Dashboard financeiro responsivo para controle de receitas, despesas e investimentos(CRUD), com autenticação de usuários, visualização de saldo, filtros por período e integração com API REST utilizando autenticação baseada em JWT.",
-    image: "/project_ai.png",
+    image: "/financehover.png",
     tags: [
       "React",
       "JavaScript",
