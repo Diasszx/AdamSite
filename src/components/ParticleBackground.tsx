@@ -1,21 +1,54 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export const ParticleBackground: React.FC = () => {
+type MousePosition = {
+  x: number | null;
+  y: number | null;
+};
+
+export const ParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
+
+  const mouseRef = useRef<MousePosition>({
+    x: null,
+    y: null,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
+    const container = canvas.parentElement;
+
+    if (!container) return;
+
     const ctx = canvas.getContext("2d");
+
     if (!ctx) return;
 
-    let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let animationFrameId = 0;
 
-    // 1. Drifting background particles (2D)
+    let width = 0;
+    let height = 0;
+
+    let sphereRadius = 0;
+    let targetSphereRadius = 0;
+
+    let sphereVisibility = 0;
+    let targetSphereVisibility = 0;
+
+    let sphereCenterX = 0;
+    let sphereCenterY = 0;
+
+    let rotationX = 0;
+    let rotationY = 0;
+
+    let previousMouseX: number | null = null;
+    let previousMouseY: number | null = null;
+
+    let backgroundParticles: BackgroundParticle[] = [];
+    const sphereParticles: SphereParticle[] = [];
+
     class BackgroundParticle {
       x: number;
       y: number;
@@ -28,10 +61,12 @@ export const ParticleBackground: React.FC = () => {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.25; // slow drift
-        this.vy = (Math.random() - 0.5) * 0.25;
-        this.radius = Math.random() * 1.2 + 0.4; // tiny: 0.4px to 1.6px
-        this.baseAlpha = Math.random() * 0.15 + 0.05; // faint
+
+        this.vx = (Math.random() - 0.5) * 0.2;
+        this.vy = (Math.random() - 0.5) * 0.2;
+
+        this.radius = Math.random() * 1.2 + 0.4;
+        this.baseAlpha = Math.random() * 0.12 + 0.04;
         this.alpha = this.baseAlpha;
       }
 
@@ -39,163 +74,445 @@ export const ParticleBackground: React.FC = () => {
         this.x += this.vx;
         this.y += this.vy;
 
-        // Bounce on borders
-        if (this.x < 0 || this.x > width) this.vx *= -1;
-        if (this.y < 0 || this.y > height) this.vy *= -1;
+        if (this.x <= 0 || this.x >= width) {
+          this.vx *= -1;
+        }
 
-        // Faint attraction to mouse
-        if (mouseRef.current.x !== null && mouseRef.current.y !== null) {
-          const dx = mouseRef.current.x - this.x;
-          const dy = mouseRef.current.y - this.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const maxDistance = 200;
+        if (this.y <= 0 || this.y >= height) {
+          this.vy *= -1;
+        }
 
-          if (distance < maxDistance) {
-            const force = (maxDistance - distance) / maxDistance;
-            this.x += (dx / distance) * force * 0.3;
-            this.y += (dy / distance) * force * 0.3;
-            this.alpha = Math.min(this.baseAlpha + force * 0.25, 0.45);
-          } else {
-            if (this.alpha > this.baseAlpha) this.alpha -= 0.005;
-          }
+        const mouseX = mouseRef.current.x;
+        const mouseY = mouseRef.current.y;
+
+        if (mouseX === null || mouseY === null) {
+          this.alpha += (this.baseAlpha - this.alpha) * 0.04;
+
+          return;
+        }
+
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.max(Math.hypot(dx, dy), 0.001);
+
+        const interactionRadius = 240;
+
+        if (distance < interactionRadius) {
+          const force = 1 - distance / interactionRadius;
+
+          this.alpha = Math.min(this.baseAlpha + force * 0.25, 0.4);
         } else {
-          if (this.alpha > this.baseAlpha) this.alpha -= 0.005;
+          this.alpha += (this.baseAlpha - this.alpha) * 0.04;
         }
       }
 
       draw() {
         if (!ctx) return;
         ctx.beginPath();
+
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200, 200, 200, ${this.alpha})`;
+
+        ctx.fillStyle = `rgba(220, 220, 220, ${this.alpha})`;
         ctx.fill();
       }
     }
 
-    // 2. Interactive mouse-spawned trail particles (2D)
-    class TrailParticle {
+    class SphereParticle {
+      theta: number;
+      phi: number;
+      baseRadius: number;
+
       x: number;
       y: number;
-      vx: number;
-      vy: number;
-      radius: number;
+      z: number;
+
+      screenX: number;
+      screenY: number;
+
+      size: number;
       alpha: number;
-      decay: number;
       isBlue: boolean;
 
-      constructor(startX: number, startY: number) {
-        // Spawn offset from mouse center to form a cloud
-        const angle = Math.random() * Math.PI * 2;
-        const radiusOffset = Math.random() * 45; // cloud size
-        this.x = startX + Math.cos(angle) * radiusOffset;
-        this.y = startY + Math.sin(angle) * radiusOffset;
+      constructor() {
+        this.theta = Math.random() * Math.PI * 2;
 
-        // Slow outward drift
-        this.vx = (Math.random() - 0.5) * 0.5 + Math.cos(angle) * 0.15;
-        this.vy = (Math.random() - 0.5) * 0.5 + Math.sin(angle) * 0.15;
-        
-        this.radius = Math.random() * 1.5 + 0.5; // 0.5px to 2.0px
-        this.alpha = Math.random() * 0.6 + 0.25; // higher initial opacity
-        this.decay = Math.random() * 0.006 + 0.004; // lives ~60-150 frames
-        this.isBlue = Math.random() < 0.25; // 25% chance of being blue
+        this.phi = Math.acos(2 * Math.random() - 1);
+
+        /*
+         * Mantém as partículas próximas da superfície
+         * da esfera, criando o efeito circular vazado.
+         */
+        this.baseRadius = Math.random() * 0.15 + 0.88;
+
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+
+        this.screenX = 0;
+        this.screenY = 0;
+
+        this.size = 1;
+        this.alpha = 0;
+
+        this.isBlue = Math.random() < 0.22;
       }
 
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.alpha -= this.decay;
+      update(
+        centerX: number,
+        centerY: number,
+        radius: number,
+        currentRotationX: number,
+        currentRotationY: number,
+        visibility: number,
+      ) {
+        const particleRadius = radius * this.baseRadius;
+
+        /*
+         * Converte as coordenadas esféricas
+         * para coordenadas cartesianas 3D.
+         */
+        let x = particleRadius * Math.sin(this.phi) * Math.cos(this.theta);
+
+        let y = particleRadius * Math.cos(this.phi);
+
+        let z = particleRadius * Math.sin(this.phi) * Math.sin(this.theta);
+
+        /*
+         * Rotação no eixo Y.
+         */
+        const cosY = Math.cos(currentRotationY);
+        const sinY = Math.sin(currentRotationY);
+
+        const rotatedX = x * cosY - z * sinY;
+
+        const rotatedZ = x * sinY + z * cosY;
+
+        x = rotatedX;
+        z = rotatedZ;
+
+        /*
+         * Rotação no eixo X.
+         */
+        const cosX = Math.cos(currentRotationX);
+        const sinX = Math.sin(currentRotationX);
+
+        const rotatedY = y * cosX - z * sinX;
+
+        const finalZ = y * sinX + z * cosX;
+
+        y = rotatedY;
+        z = finalZ;
+
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        /*
+         * Projeção em perspectiva.
+         *
+         * Valores menores criam um efeito 3D
+         * mais evidente.
+         */
+        const perspective = 360;
+
+        const safeDenominator = Math.max(perspective - z, 30);
+
+        const scale = perspective / safeDenominator;
+
+        this.screenX = centerX + x * scale;
+
+        this.screenY = centerY + y * scale;
+
+        const normalizedDepth = Math.min(
+          Math.max((z / Math.max(radius, 1) + 1) / 2, 0),
+          1,
+        );
+
+        /*
+         * Partículas frontais ficam maiores.
+         */
+        this.size = (0.55 + normalizedDepth * 1.9) * scale;
+
+        /*
+         * Partículas frontais ficam mais visíveis.
+         */
+        this.alpha = (0.12 + normalizedDepth * 0.78) * visibility;
       }
 
       draw() {
-        if (!ctx) return;
+        if (!ctx || this.alpha <= 0.01) return;
+
+        const red = this.isBlue ? 74 : 225;
+        const green = this.isBlue ? 158 : 235;
+        const blue = 255;
+
+        /*
+         * Glow externo.
+         */
+        const glowRadius = Math.max(this.size * 3, 2);
+
+        const gradient = ctx.createRadialGradient(
+          this.screenX,
+          this.screenY,
+          0,
+          this.screenX,
+          this.screenY,
+          glowRadius,
+        );
+
+        gradient.addColorStop(
+          0,
+          `rgba(${red}, ${green}, ${blue}, ${this.alpha * 0.4})`,
+        );
+
+        gradient.addColorStop(1, `rgba(${red}, ${green}, ${blue}, 0)`);
+
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        const color = this.isBlue
-          ? `rgba(74, 158, 255, ${Math.max(this.alpha, 0)})`
-          : `rgba(220, 220, 220, ${Math.max(this.alpha, 0)})`;
-        ctx.fillStyle = color;
+
+        ctx.arc(this.screenX, this.screenY, glowRadius, 0, Math.PI * 2);
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        /*
+         * Núcleo da partícula.
+         */
+        ctx.beginPath();
+
+        ctx.arc(
+          this.screenX,
+          this.screenY,
+          Math.max(this.size, 0.4),
+          0,
+          Math.PI * 2,
+        );
+
+        ctx.fillStyle = `rgba(
+          ${red},
+          ${green},
+          ${blue},
+          ${this.alpha}
+        )`;
+
         ctx.fill();
       }
     }
 
-    // Initial background particles
-    const bgParticles: BackgroundParticle[] = [];
-    const bgCount = Math.floor((width * height) / 10000);
-    for (let i = 0; i < Math.max(bgCount, 120); i++) {
-      bgParticles.push(new BackgroundParticle());
-    }
+    const createBackgroundParticles = () => {
+      backgroundParticles = [];
 
-    // Interactive trail particles array
-    let trailParticles: TrailParticle[] = [];
+      const calculatedAmount = Math.floor((width * height) / 11000);
 
-    // Track mouse events
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX;
-      mouseRef.current.y = e.clientY;
+      const amount = Math.min(Math.max(calculatedAmount, 80), 220);
 
-      // Spawn trail particles upon mouse movement
-      if (mouseRef.current.x !== null && mouseRef.current.y !== null) {
-        for (let i = 0; i < 4; i++) {
-          trailParticles.push(new TrailParticle(mouseRef.current.x, mouseRef.current.y));
-        }
+      for (let index = 0; index < amount; index++) {
+        backgroundParticles.push(new BackgroundParticle());
       }
+    };
+
+    const createSphereParticles = () => {
+      sphereParticles.length = 0;
+
+      /*
+       * Aumente esse valor para deixar
+       * a esfera mais preenchida.
+       */
+      const particleAmount = window.innerWidth < 768 ? 280 : 520;
+
+      for (let index = 0; index < particleAmount; index++) {
+        sphereParticles.push(new SphereParticle());
+      }
+    };
+
+    const resizeCanvas = () => {
+      const rect = container.getBoundingClientRect();
+
+      const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+      width = rect.width;
+      height = rect.height;
+
+      canvas.width = width * devicePixelRatio;
+
+      canvas.height = height * devicePixelRatio;
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+      sphereCenterX = width / 2;
+      sphereCenterY = height / 2;
+
+      createBackgroundParticles();
+      createSphereParticles();
+    };
+
+    const handleMouseEnter = (event: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+
+      const mouseX = event.clientX - rect.left;
+
+      const mouseY = event.clientY - rect.top;
+
+      sphereCenterX = mouseX;
+      sphereCenterY = mouseY;
+
+      mouseRef.current = {
+        x: mouseX,
+        y: mouseY,
+      };
+
+      /*
+       * Define o tamanho final da esfera.
+       */
+      targetSphereRadius = window.innerWidth < 768 ? 100 : 185;
+
+      targetSphereVisibility = 1;
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+
+      const mouseX = event.clientX - rect.left;
+
+      const mouseY = event.clientY - rect.top;
+
+      if (previousMouseX !== null && previousMouseY !== null) {
+        const deltaX = mouseX - previousMouseX;
+
+        const deltaY = mouseY - previousMouseY;
+
+        rotationY += deltaX * 0.0025;
+        rotationX += deltaY * 0.0025;
+      }
+
+      previousMouseX = mouseX;
+      previousMouseY = mouseY;
+
+      mouseRef.current = {
+        x: mouseX,
+        y: mouseY,
+      };
+
+      /*
+       * Faz o centro da esfera acompanhar o mouse
+       * com um pequeno atraso.
+       */
+      sphereCenterX += (mouseX - sphereCenterX) * 0.28;
+
+      sphereCenterY += (mouseY - sphereCenterY) * 0.28;
+
+      targetSphereRadius = window.innerWidth < 768 ? 100 : 185;
+
+      targetSphereVisibility = 1;
     };
 
     const handleMouseLeave = () => {
-      mouseRef.current.x = null;
-      mouseRef.current.y = null;
+      mouseRef.current = {
+        x: null,
+        y: null,
+      };
+
+      previousMouseX = null;
+      previousMouseY = null;
+
+      targetSphereRadius = 0;
+      targetSphereVisibility = 0;
     };
 
-    // Resize handler
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      
-      bgParticles.length = 0;
-      const newBgCount = Math.floor((width * height) / 10000);
-      for (let i = 0; i < Math.max(newBgCount, 120); i++) {
-        bgParticles.push(new BackgroundParticle());
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseleave", handleMouseLeave);
-    window.addEventListener("resize", handleResize);
-
-    // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw and update background particles
-      bgParticles.forEach((p) => {
-        p.update();
-        p.draw();
+      backgroundParticles.forEach((particle) => {
+        particle.update();
+        particle.draw();
       });
 
-      // Spawn some particles automatically even if mouse is still but on-screen
-      if (mouseRef.current.x !== null && mouseRef.current.y !== null && Math.random() < 0.4) {
-        trailParticles.push(new TrailParticle(mouseRef.current.x, mouseRef.current.y));
+      /*
+       * Suaviza a expansão e o desaparecimento.
+       */
+      sphereRadius += (targetSphereRadius - sphereRadius) * 0.075;
+
+      sphereVisibility += (targetSphereVisibility - sphereVisibility) * 0.09;
+
+      /*
+       * Rotação automática da esfera.
+       */
+      rotationY += 0.0035;
+      rotationX += 0.0012;
+
+      /*
+       * Mantém o centro acompanhando o mouse,
+       * mesmo quando ele se move rapidamente.
+       */
+      const mouseX = mouseRef.current.x;
+      const mouseY = mouseRef.current.y;
+
+      if (mouseX !== null && mouseY !== null) {
+        sphereCenterX += (mouseX - sphereCenterX) * 0.12;
+
+        sphereCenterY += (mouseY - sphereCenterY) * 0.12;
       }
 
-      // Draw, update and filter trail particles
-      trailParticles = trailParticles.filter((p) => {
-        p.update();
-        if (p.alpha <= 0) return false;
-        p.draw();
-        return true;
-      });
+      if (sphereVisibility > 0.01 && sphereRadius > 0.5) {
+        sphereParticles.forEach((particle) => {
+          particle.update(
+            sphereCenterX,
+            sphereCenterY,
+            sphereRadius,
+            rotationX,
+            rotationY,
+            sphereVisibility,
+          );
+        });
+
+        /*
+         * Desenha primeiro as partículas
+         * que estão atrás.
+         */
+        sphereParticles.sort(
+          (particleA, particleB) => particleA.z - particleB.z,
+        );
+
+        sphereParticles.forEach((particle) => {
+          particle.draw();
+        });
+      }
 
       animationFrameId = requestAnimationFrame(animate);
     };
+
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    if (reducedMotionQuery.matches) {
+      return;
+    }
+
+    resizeCanvas();
+
+    container.addEventListener("mouseenter", handleMouseEnter);
+
+    container.addEventListener("mousemove", handleMouseMove);
+
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    window.addEventListener("resize", resizeCanvas);
 
     animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("resize", handleResize);
+
+      container.removeEventListener("mouseenter", handleMouseEnter);
+
+      container.removeEventListener("mousemove", handleMouseMove);
+
+      container.removeEventListener("mouseleave", handleMouseLeave);
+
+      window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
 

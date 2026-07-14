@@ -51,7 +51,7 @@ export const Header: React.FC = () => {
 
       {/* LET'S WORK Button */}
       <button className="bg-blue-400 text-black font-extrabold text-xs md:text-sm tracking-wider px-5 py-2 md:px-6 md:py-2.5 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] active:scale-95">
-        <span>LET'S WORK</span>
+        <span>VAMOS COMEÇAR</span>
         <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center text-blue-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">
           <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={3} />
         </div>

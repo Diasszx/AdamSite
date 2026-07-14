@@ -3,7 +3,8 @@ import { ArrowRight, Globe } from "lucide-react";
 
 const WORDS = ["SOLUÇÕES", "VALOR", "EXPERIÊNCIAS", "RESULTADOS", "INOVAÇÃO"];
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÃÕÇÉÊÁ";
-const DESCRIPTION_TEXT = "Sou Adam, desenvolvedor Full Stack que cria aplicações modernas, performáticas e intuitivas, transformando ideias em soluções digitais de alto impacto.";
+const DESCRIPTION_TEXT =
+  "Sou Adam, desenvolvedor Full Stack que cria aplicações modernas, performáticas e intuitivas, transformando ideias em soluções digitais de alto impacto.";
 
 export const Hero: React.FC = () => {
   const [currentWord, setCurrentWord] = useState(WORDS[0]);
@@ -13,7 +14,7 @@ export const Hero: React.FC = () => {
     if (textIndex < DESCRIPTION_TEXT.length) {
       const timer = setTimeout(() => {
         setTextIndex((prev) => prev + 1);
-      }, 8); // 8ms typing speed - faster
+      }, 3); // 8ms typing speed - faster
       return () => clearTimeout(timer);
     }
   }, [textIndex]);
@@ -110,7 +111,9 @@ export const Hero: React.FC = () => {
           <div className="max-w-xs md:max-w-sm flex flex-col items-end gap-6 mt-auto">
             <p className="font-mono text-zinc-400 text-xs md:text-sm leading-relaxed tracking-wider min-h-[5.5rem] md:min-h-[4.5rem]">
               {DESCRIPTION_TEXT.slice(0, textIndex)}
-              <span className="text-blue-400 font-bold animate-blink ml-0.5">|</span>
+              <span className="text-blue-400 font-bold animate-blink ml-0.5">
+                |
+              </span>
             </p>
 
             <div className="flex items-center gap-2 text-blue-400 font-bold tracking-widest text-[10px] md:text-xs hover:text-white transition-colors duration-300 cursor-pointer group pointer-events-auto">
