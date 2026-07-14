@@ -366,7 +366,7 @@ export const ParticleBackground = () => {
       /*
        * Define o tamanho final da esfera.
        */
-      targetSphereRadius = window.innerWidth < 768 ? 100 : 185;
+      targetSphereRadius = window.innerWidth < 768 ? 70 : 130;
 
       targetSphereVisibility = 1;
     };
@@ -403,7 +403,7 @@ export const ParticleBackground = () => {
 
       sphereCenterY += (mouseY - sphereCenterY) * 0.28;
 
-      targetSphereRadius = window.innerWidth < 768 ? 100 : 185;
+      targetSphereRadius = window.innerWidth < 768 ? 70 : 130;
 
       targetSphereVisibility = 1;
     };

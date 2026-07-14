@@ -1,6 +1,7 @@
 import { ParticleBackground } from './components/ParticleBackground';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { Projects } from './components/Projects';
 import { FooterTicker } from './components/FooterTicker';
 
 function App() {
@@ -15,8 +16,11 @@ function App() {
       {/* Main Hero Showcase */}
       <Hero />
 
-      {/* Infinite Ticker Footer */}
+      {/* Infinite Ticker (transition banner between Hero and Projects) */}
       <FooterTicker />
+
+      {/* 3D Projects Showcase Section */}
+      <Projects />
     </div>
   );
 }
