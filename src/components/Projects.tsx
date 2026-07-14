@@ -204,7 +204,7 @@ export const Projects: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full mb-12 select-none">
         <div className="flex items-center gap-4">
           <h2 className="font-display text-xl md:text-2xl tracking-widest text-zinc-400 font-bold uppercase">
-            SELECTED PROJECTS
+            PRINCIPAIS PROJETOS
           </h2>
           <div className="h-[2px] w-12 bg-blue-400 rounded" />
         </div>

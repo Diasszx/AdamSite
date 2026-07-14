@@ -39,14 +39,14 @@ export const FooterTicker: React.FC = () => {
   }, []);
 
   return (
-    <footer className="w-full bg-black/80 border-t border-zinc-900 py-4 px-6 md:px-12 flex items-center justify-between text-xxs md:text-xs font-mono tracking-widest text-zinc-500 select-none relative z-10">
+    <footer className="w-full bg-black/80 border-t border-zinc-900 py-4 px-6 md:px-12 flex items-center justify-between text-[10px] md:text-xs font-mono tracking-widest text-zinc-500 select-none relative z-10">
       {/* UTC Clock */}
-      <div className="flex-shrink-0 w-48 text-left text-zinc-400 font-medium">
+      <div className="flex-shrink-0 text-left text-zinc-400 font-medium text-[10px] sm:text-xs">
         {utcTime}
       </div>
 
       {/* Marquee Center */}
-      <div className="flex-1 overflow-hidden mx-4 md:mx-10 relative mask-gradient">
+      <div className="hidden sm:block flex-1 overflow-hidden mx-4 md:mx-10 relative mask-gradient">
         {/* Fading borders for ticker overlay */}
         <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />

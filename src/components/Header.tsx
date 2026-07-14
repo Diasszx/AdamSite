@@ -30,19 +30,13 @@ export const Header: React.FC = () => {
           PROJETOS
         </a>
         <a
-          href="#blog"
-          className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
-        >
-          SOBRE
-        </a>
-        <a
-          href="#about"
+          href="#experience"
           className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
         >
           EXPERIÊNCIA
         </a>
         <a
-          href="#resume"
+          href="#contact"
           className="transition-all duration-300 hover:text-white relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full"
         >
           CONTATO
