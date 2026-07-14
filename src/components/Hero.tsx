@@ -4,7 +4,7 @@ import { ArrowRight, Globe } from "lucide-react";
 const WORDS = ["SOLUÇÕES", "VALOR", "EXPERIÊNCIAS", "RESULTADOS", "INOVAÇÃO"];
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÃÕÇÉÊÁ";
 const DESCRIPTION_TEXT =
-  "Sou Adam, desenvolvedor Full Stack que cria aplicações modernas, performáticas e intuitivas, transformando ideias em soluções digitais de alto impacto.";
+  "Sou Adam, desenvolvedor Full Stack que cria aplicações modernas, eficientes e intuitivas, transformando ideias em soluções digitais de alto impacto.";
 
 export const Hero: React.FC = () => {
   const [currentWord, setCurrentWord] = useState(WORDS[0]);
@@ -98,7 +98,10 @@ export const Hero: React.FC = () => {
               onClick={() => {
                 const element = document.getElementById("projects");
                 if (element) {
-                  element.scrollIntoView({ behavior: "smooth", block: "center" });
+                  element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
                 }
               }}
               className="bg-white text-black font-extrabold text-xs md:text-sm tracking-wider px-6 py-3 rounded-full flex items-center gap-2 group transition-all duration-300 hover:bg-blue-400 hover:shadow-[0_0_15px_rgba(204,255,0,0.5)] active:scale-95 pointer-events-auto cursor-pointer"

@@ -17,24 +17,29 @@ const EXPERIENCE_DATA: ExperienceItem[] = [
     role: "Técnico de Robótica",
     company: "SESI",
     period: "11/2025 até o momento",
-    description: "Orientação de estudantes em programação, eletrônica, Arduino, prototipagem e robótica educacional.",
+    description:
+      "Mentor de STEM Racing e Robótica Educacional. Capacito equipes estudantis no desenvolvimento de protótipos competitivos, integrando modelagem 3D, simulações CFD, eletrônica embarcada e programação com Arduino.",
     isCurrent: true,
-    type: "robotics"
+    type: "robotics",
   },
   {
     id: 2,
     role: "Desenvolvedor de Software",
     company: "Inteligence Gestão Empresarial",
     period: "11/2024 até 11/2025",
-    description: "Desenvolvimento de novas funcionalidades para sistema ERP utilizando PHP e Adianti Framework. Correção de bugs e manutenção evolutiva. Implementação de regras de negócio, formulários, relatórios e integrações entre módulos. Manipulação de dados utilizando MySQL e SQLite. Versionamento de código utilizando Git e colaboração com equipe.",
+    description:
+      "Desenvolvimento de novas funcionalidades para sistema ERP utilizando PHP e Adianti Framework. Correção de bugs e manutenção evolutiva. Implementação de regras de negócio, formulários, relatórios e integrações entre módulos. Manipulação de dados utilizando MySQL e SQLite. Versionamento de código utilizando Git e colaboração com equipe.",
     isCurrent: false,
-    type: "software"
-  }
+    type: "software",
+  },
 ];
 
 export const Experience: React.FC = () => {
   return (
-    <section id="experience" className="w-full bg-black py-20 md:py-28 text-white relative z-10 overflow-hidden flex flex-col justify-center">
+    <section
+      id="experience"
+      className="w-full bg-black py-20 md:py-28 text-white relative z-10 overflow-hidden flex flex-col justify-center"
+    >
       {/* Section Header */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full mb-16 select-none">
         <div className="flex items-center gap-4">
@@ -85,7 +90,9 @@ export const Experience: React.FC = () => {
                 {/* Card Container */}
                 <div
                   className={`w-full md:w-[calc(50%-2.5rem)] ml-12 md:ml-0 ${
-                    isEven ? "md:mr-auto md:text-right" : "md:ml-auto md:text-left"
+                    isEven
+                      ? "md:mr-auto md:text-right"
+                      : "md:ml-auto md:text-left"
                   }`}
                 >
                   <div className="bg-zinc-950/40 border border-zinc-900/80 rounded-2xl p-6 md:p-8 hover:border-blue-400/40 hover:shadow-[0_0_20px_rgba(74,158,255,0.06)] transition-all duration-300 pointer-events-auto select-none">
