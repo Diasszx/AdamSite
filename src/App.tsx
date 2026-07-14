@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
 import { Experience } from './components/Experience';
+import { Contact } from './components/Contact';
 import { FooterTicker } from './components/FooterTicker';
 
 function App() {
@@ -25,6 +26,9 @@ function App() {
 
       {/* Staggered Experience Timeline Section */}
       <Experience />
+
+      {/* Contact Section */}
+      <Contact />
     </div>
   );
 }
