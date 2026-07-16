@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -44,58 +44,9 @@ const LinkedinIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
-const Spline = lazy(() => import("@splinetool/react-spline"));
-
 export const Contact: React.FC = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isSplineVisible, setIsSplineVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const splineContainerRef = useRef<HTMLDivElement>(null);
-
-  // Detectar se é mobile (menor que breakpoint lg do Tailwind: 1024px)
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // IntersectionObserver para lazy loading do Spline 3D (apenas desktop)
-  useEffect(() => {
-    // Não executa em mobile
-    if (isMobile) return;
-
-    const container = splineContainerRef.current;
-    if (!container) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Delay de 500ms para evitar carregamento durante scroll rápido
-            const timer = setTimeout(() => {
-              setIsSplineVisible(true);
-            }, 500);
-            return () => clearTimeout(timer);
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "100px", // Começa a carregar quando estiver a 100px de distância
-      }
-    );
-
-    observer.observe(container);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [isMobile]);
 
   const {
     register,
@@ -153,34 +104,9 @@ export const Contact: React.FC = () => {
         <div className="h-[2px] w-16 bg-blue-400 rounded mt-4" />
       </div>
 
-      <div className={`max-w-7xl mx-auto px-6 md:px-12 w-full grid gap-12 items-center ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2 lg:gap-20'}`}>
-        {/* Left Side: Spline 3D Waving Robot - Apenas Desktop */}
-        {!isMobile && (
-          <div 
-            ref={splineContainerRef}
-            className="w-full h-[350px] md:h-[500px] relative pointer-events-auto rounded-2xl overflow-hidden flex items-center justify-center bg-zinc-950/30 border border-zinc-900"
-          >
-            {isSplineVisible ? (
-              <Suspense
-                fallback={
-                  <div className="w-full h-full flex items-center justify-center text-zinc-500 font-mono text-xs">
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-400 mr-2" />
-                    Carregando Robô 3D...
-                  </div>
-                }
-              >
-                <Spline scene="https://prod.spline.design/N5l9YaPPaFFzzbEr/scene.splinecode" />
-              </Suspense>
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-600 font-mono text-xs">
-                <span>3D Robô (carregará ao rolar)</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Right Side: Form & Contact Info - Centralizado em mobile */}
-        <div className={`flex flex-col gap-8 w-full ${isMobile ? 'max-w-lg mx-auto' : ''}`}>
+      {/* Formulário Centralizado */}
+      <div className="max-w-2xl mx-auto px-6 md:px-12 w-full">
+        <div className="flex flex-col gap-8 w-full">
           {/* Contact Form Card */}
           <div className="w-full bg-zinc-950/40 border border-zinc-900 rounded-2xl p-6 md:p-8 hover:border-zinc-800/80 transition-all duration-300 shadow-2xl relative min-h-[420px] flex flex-col justify-center">
             {submitSuccess ? (
