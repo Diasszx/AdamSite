@@ -14,7 +14,7 @@ export const Hero: React.FC = () => {
     if (textIndex < DESCRIPTION_TEXT.length) {
       const timer = setTimeout(() => {
         setTextIndex((prev) => prev + 1);
-      }, 3); // 8ms typing speed - faster
+      }, 25); // Reduzido de 3ms para 25ms - menos re-renderizações
       return () => clearTimeout(timer);
     }
   }, [textIndex]);
@@ -46,9 +46,9 @@ export const Hero: React.FC = () => {
           clearInterval(intervalId);
         }
 
-        iteration += 0.35; // Controls the speed of letter locking (reveal speed)
-      }, 30);
-    }, 3200); // Rotate word every 3.2 seconds
+        iteration += 0.5; // Aumentado de 0.35 para 0.5 - mais rápido, menos frames
+      }, 45); // Aumentado de 30ms para 45ms - menos re-renderizações
+    }, 4000); // Aumentado de 3.2s para 4s - mais tempo entre animações
 
     return () => clearInterval(interval);
   }, []);
